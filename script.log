@@ -1,0 +1,43 @@
+Script started on 2021-10-15 07:10:24+00:00
+]0;root@server:/vagrant[root@server vagrant]# zpool create storage mirror /dev/sd{b,c,d,e}
+]0;root@server:/vagrant[root@server vagrant]# for algo in {gzip,gzip-9,zle,lzjb,lz4}; do zfs create storage/$algo -o compression=$algo ; cp -rf //etc /storage/$algo/ ; done
+]0;root@server:/vagrant[root@server vagrant]# zfs get compressratio
+NAME            PROPERTY       VALUE  SOURCE
+storage         compressratio  2.34x  -
+storage/gzip    compressratio  4.03x  -
+storage/gzip-9  compressratio  4.11x  -
+storage/lz4     compressratio  2.49x  -
+storage/lzjb    compressratio  2.18x  -
+storage/zle     compressratio  1.28x  -
+]0;root@server:/vagrant[root@server vagrant]# curl -L -o zfs_task1.tar.gz https://drive.google.com/u/0/uc?id=1KRBNW33QWqbvbVHa3hLJivOAt60yukkg&exxport=download
+[1] 37853
+]0;root@server:/vagrant[root@server vagrant]#   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:02 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:03 --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:04 --:--:--     0100   377    0   377    0     0     79      0 --:--:--  0:00:04 --:--:--    83
+  1 7104k    1 83686    0     0  16186      0  0:07:29  0:00:05  0:07:24 16186100 7104k  100 7104k    0     0  1204k      0  0:00:05  0:00:05 --:--:-- 9660k
+
+]0;root@server:/vagrant[1]+  Done                    curl -L -o zfs_task1.tar.gz https://drive.google.com/u/0/uc?id=1KRBNW33QWqbvbVHa3hLJivOAt60yukkg
+[root@server vagrant]# tar xzf zfs_task1.tar.gz 
+]0;root@server:/vagrant[root@server vagrant]# zpool import -d ./zpoolexport/filea -d ./zpoolexport/fileb -a
+]0;root@server:/vagrant[root@server vagrant]# zfs get available,type,recordsize,compression,checksum otus
+NAME  PROPERTY     VALUE       SOURCE
+otus  available    350M        -
+otus  type         filesystem  -
+otus  recordsize   128K        local
+otus  compression  zle         local
+otus  checksum     sha256      local
+]0;root@server:/vagrant[root@server vagrant]# curl -L -o otus_task2.file https://drive.google.com/u/0/uc?id=1gH8gCL9y7Nd5Ti3IRmplZPF1XjzxeRAG&expport=download
+[1] 38159
+]0;root@server:/vagrant[root@server vagrant]#   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   377    0   377    0     0    628      0 --:--:-- --:--:-- --:--:--   628
+  0 5305k    0 23742    0     0  23813      0  0:03:48 --:--:--  0:03:48 23813100 5305k  100 5305k    0     0  3301k      0  0:00:01  0:00:01 --:--:-- 8659k
+
+]0;root@server:/vagrant[1]+  Done                    curl -L -o otus_task2.file https://drive.google.com/u/0/uc?id=1gH8gCL9y7Nd5Ti3IRmplZPF1XjzxeRAG
+[root@server vagrant]# zfs receive otus/storage < otus_task2.file
+]0;root@server:/vagrant[root@server vagrant]# find /otus/storage/ -type f -name "secret_message" -exec cat {} \;
+https://github.com/sindresorhus/awesome
+]0;root@server:/vagrant[root@server vagrant]# ^C
+]0;root@server:/vagrant[root@server vagrant]# exit
+
+Script done on 2021-10-15 07:15:32+00:00
